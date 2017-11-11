@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Hello, world!</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+	
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+	<script src="js/jquery-3.2.1.js"></script>
+  </head>
+  <body>
+	<script>
+		$(document).ready(function(){
+			listar();	
+		});
+		
+		function listar(){
+			$.ajax({
+					url:'http://andrecosta.info/cards/',
+					type:'GET',
+					dataType:'json',
+					data:'',
+					success:function(result){
+						if(result.success){
+							var divCard	=	$('#listar');
+							var cardAux	=	'';
+							//var count = 0;
+							$.each(result.data,function(i,card){
+								if(card.descricao=="gato" || card.descricao=="neko-chan")console.log("card.id ("+card.id+")");
+								cardAux	=	'<div class="col-md-4">'+
+												'<div class="card" id="card_'+card.id+'">'+
+												  '<img class="card-img-top" src="'+card.url_imagem+'" alt="Card Solar">'+
+													'<div class="card-body">'+
+													'<h4 class="card-title"><span>'+card.likes+' Curtidas</span></h4>'+
+													'<p class="card-text">'+card.descricao+'</p>'+
+													'<div style="float:left">'+
+														'<button class="btn btn-danger" onclick="excluir('+card.id+')" >Excluir</button>'+
+														'<button class="btn btn-success" onclick="curtir('+card.id+')">Curtir</button>'+
+													'</div>'+
+												  '</div>'+
+												  '<div>'+
+												'</div>'+
+											'</div>';
+								//count++;
+								divCard.append(cardAux);
+								
+								
+							});
+							
+							
+						}
+					},
+					error:function(xhr,resp,text){}
+				});	
+		}
+		
+		function cadastrar(){
+			var url		=	$('#inpURL').val();
+			var descr	=	$('#inpDesc').val();
+			$.ajax({
+					url:'http://andrecosta.info/cards/',
+					type:'POST',
+					dataType:'json',
+					data:'url_imagem='+url+'&descricao='+descr,
+					success:function(result){
+						alert(result.data);
+						$('#cadastrar').modal('toggle');
+						listar();
+						$('#inpURL').val("");
+						$('#inpDesc').val("");
+					},
+					error:function(xhr,resp,text){}
+				});	
+		}
+		
+		function excluir(cardid){
+			$.ajax({
+					url:'http://andrecosta.info/cards/',
+					type:'DELETE',
+					dataType:'json',
+					data:'id='+cardid,
+					success:function(result){
+						alert(result.data);
+						listar();
+					},
+					error:function(xhr,resp,text){}
+				});	
+		}
+		
+		function curtir(cardid){
+			$.ajax({
+					url:'http://andrecosta.info/cards/like/',
+					type:'POST',
+					dataType:'json',
+					data:'id='+cardid,
+					success:function(result){
+						alert(result.data);
+						console.log(result.qtd_likes+" Curtidas");
+						$('#card_'+cardid+' h4').html(result.qtd_likes+" Curtidas");
+					},
+					error:function(xhr,resp,text){}
+				});	
+		}
+	</script>
+	
+	 <div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">				  
+					<li class="nav-item active">
+						<button type="button" class="btn btn-link" data-toggle="modal" data-target="#listar">
+						  Listar
+						</button>
+					</li>
+					<li class="nav-item">
+						<button type="button" class="btn btn-link" data-toggle="modal" data-target="#cadastrar">
+						  Cadastrar
+						</button>
+					</li>			  
+				</ul>
+			</div>
+		</nav>
+		<div   class="row" id="listar">
+			<!--<div class="card"class="col-sm-4">
+			  <img class="card-img-top" src="http://icongal.com/gallery/image/43087/weather_sun_sunny.png" alt="Card Solar">
+			  <div class="card-body">
+				<h4 class="card-title">Sol</h4>
+				<p class="card-text">iluminação.........................</p>
+				<button class="btn btn-primary" >Aproximar-se..</button>
+				<div style="float:left">
+					<button class="btn btn-danger" >Excluir</button>
+					<button class="btn btn-success" >Curtir</button>
+				</div>
+			  </div>
+			</div>
+			<div class="card"class="col-sm-4">
+			  <img class="card-img-top" src="http://images.gofreedownload.net/light-green-cd-music-27299.jpg" alt="Card Solar">
+			  <div class="card-body">
+				<h4 class="card-title">Som</h4>
+				<p class="card-text">melodia.........................</p>
+				<button class="btn btn-primary" >Aproximar-se..</button>
+				<div style="float:left">
+					<button class="btn btn-danger" >Excluir</button>
+					<button class="btn btn-success" >Curtir</button>
+				</div>
+			  </div>
+			</div>
+			<div class="card"class="col-sm-4">
+			  <img class="card-img-top" src="https://arvorefeliz.files.wordpress.com/2015/06/arvore-feliz-logo-cc3b3pia1.jpg?w=302" alt="Card Solar">
+			  <div class="card-body">
+				<h4 class="card-title">Arvore</h4>
+				<p class="card-text">crescimento.........................</p>
+				<button class="btn btn-primary" >Aproximar-se..</button>
+				<div style="float:left">
+					<button class="btn btn-danger" >Excluir</button>
+					<button class="btn btn-success" >Curtir</button>
+				</div>
+			  </div>
+			</div>-->			
+		</div>
+	
+		<div   class="modal fade" id="cadastrar">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				  </div>
+				  <div class="modal-body">
+					<div  class="row col-md-12">
+						<div class="col-md-10 form-group" >							
+							<span >Imagem(url):</span>
+							<input class="form-control" type="text" value="" maxlength="100" id="inpURL" />
+						</div>
+					</div>
+					<div  class="row col-md-12">
+						<div class="col-md-8 form-group">							
+							<label>Descrição:</label>
+							<input class="form-control" type="text" value="" maxlength="255" id="inpDesc"/>
+						</div>
+					</div>
+				  </div>				  
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="btnCadCard" onclick="cadastrar()">Save changes</button>
+				  </div>
+				</div>
+			</div>			
+		</div>
+	</div>
+	<!--
+    <div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">				  
+					<li class="nav-item active">
+						<button type="button" class="btn btn-link" data-toggle="modal" data-target="#listar">
+						  Listar
+						</button>
+					</li>
+					<li class="nav-item">
+						<button type="button" class="btn btn-link" data-toggle="modal" data-target="#cadastrar">
+						  Cadastrar
+						</button>
+					</li>			  
+				</ul>
+			</div>
+		</nav>
+		<div   class="row" id="listar">
+			<div id="divContainerCard" >
+				<div class="col-md-4">
+					<div class="card">
+					  <img class="card-img-top" src="C:\Users\730162005\Desktop\img01.jpg" alt="Card Solar">
+					  <div class="card-body">
+						<h4 class="card-title">Sol</h4>
+						<p class="card-text">luminosidade.........................</p>
+						<button class="btn btn-primary" >Aproximar-se..</button>
+						<div style="float:left">
+							<button class="btn btn-danger" >Excluir</button>
+							<button class="btn btn-success" >Curtir</button>
+						</div>
+					  </div>
+					  <div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card" >
+					  <img class="card-img-top" src="C:\Users\730162005\Desktop\img02.jpg" alt="Card Sonoro">
+					  <div class="card-body">
+						<h4 class="card-title">Som</h4>
+						<p class="card-text">melodia.........................</p>
+						<button class="btn btn-primary" >Aproximar-se..</button>
+						<div style="float:left">
+							<button class="btn btn-danger" >Excluir</button>
+							<button class="btn btn-success" >Curtir</button>
+						</div>
+					  </div>
+					</div>
+				</div>
+			
+				<div class="col-md-4">
+					<div class="card" >
+					  <img class="card-img-top" src="C:\Users\730162005\Desktop\img03.jpg" alt="Card Vivo">
+					  <div class="card-body">
+						<h4 class="card-title">Arvore</h4>
+						<p class="card-text">crescimento.........................</p>
+						<button class="btn btn-primary" >Aproximar-se..</button>
+						<div style="float:left">
+							<button class="btn btn-danger" >Excluir</button>
+							<button class="btn btn-success" >Curtir</button>
+						</div>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div   class="modal fade" id="cadastrar">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					  <span aria-hidden="true">&times;</span>
+					</button>
+				  </div>
+				  <div class="modal-body">
+					<div  class="row col-md-12">
+						<div class="col-md-10 form-group" >							
+							<span >Imagem(url):</span>
+							<input class="form-control" type="text" value="" maxlength="100" />
+						</div>
+					</div>
+					<div  class="row col-md-12">
+						<div class="col-md-8 form-group">							
+							<label>Descrição:</label>
+							<input class="form-control" type="text" value="" maxlength="255"/>
+						</div>
+					</div>
+				  </div>
+				</div>
+			  </div>			
+		</div>
+	</div>
+	-->
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/popper.min.js" ></script>
+    <script src="js/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+  </body>
+</html>
