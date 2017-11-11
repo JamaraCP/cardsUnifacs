@@ -18,18 +18,22 @@
 		});
 		
 		function listar(){
+			var divCard	=	$('#listar');	
 			$.ajax({
 					url:'http://andrecosta.info/cards/',
 					type:'GET',
 					dataType:'json',
 					data:'',
+					beforeSend: function() {
+						divCard.empty();
+						divCard.html('<div><img src="https://equilter.com/assets/images/loading.gif" /></div>');
+					},
 					success:function(result){
-						if(result.success){
-							var divCard	=	$('#listar');
+						if(result.success){							
 							var cardAux	=	'';
 							//var count = 0;
+							divCard.html('');
 							$.each(result.data,function(i,card){
-								if(card.descricao=="gato" || card.descricao=="neko-chan")console.log("card.id ("+card.id+")");
 								cardAux	=	'<div class="col-md-4">'+
 												'<div class="card" id="card_'+card.id+'">'+
 												  '<img class="card-img-top" src="'+card.url_imagem+'" alt="Card Solar">'+
@@ -114,7 +118,7 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">				  
 					<li class="nav-item active">
-						<button type="button" class="btn btn-link" data-toggle="modal" data-target="#listar">
+						<button type="button" class="btn btn-link" onclick="listar()">
 						  Listar
 						</button>
 					</li>
@@ -298,5 +302,10 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="js/popper.min.js" ></script>
     <script src="js/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
   </body>
 </html>
